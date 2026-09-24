@@ -19,6 +19,26 @@ namespace At_the_Bottom
         public MainWindow()
         {
             InitializeComponent();
+
+            var level = Models.LevelFactory.CreateTestLevel();
+
+            for (int y = 0; y < level.Height; y++)
+            {
+                var sb = new System.Text.StringBuilder();
+                for (int x = 0; x < level.Width; x++)
+                {
+                    var tile = level.GetTile(x, y);
+                    char c = tile?.Type switch
+                    {
+                        Models.TileType.Wall => '#',
+                        Models.TileType.Floor => '.',
+                        Models.TileType.Stairs => '>',
+                        _ => '?'
+                    };
+                    sb.Append(c);
+                }
+                System.Diagnostics.Debug.WriteLine(sb.ToString());
+            }
         }
     }
 }

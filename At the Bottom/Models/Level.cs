@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace At_the_Bottom.Models
+﻿namespace At_the_Bottom.Models
 {
     public class Level
     {
@@ -21,7 +15,7 @@ namespace At_the_Bottom.Models
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++) {
-                    Tiles[x, y] = new Tile(TyleType.Floor, new Position(x, y));
+                    Tiles[x, y] = new Tile(TileType.Wall, new Position(x, y));
                 }
             }
         }
