@@ -1,0 +1,6 @@
+﻿namespace At_the_Bottom.Models
+{
+    public class Player(Position pos) : Entity(pos, '@', "Player")
+    {
+    }
+}

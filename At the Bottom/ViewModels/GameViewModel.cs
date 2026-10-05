@@ -10,11 +10,18 @@ namespace At_the_Bottom.ViewModels
         public int TileSize { get; } = 32;
         public double CanvasWidth => Level.Width * TileSize;  
         public double CanvasHeight => Level.Height * TileSize;
+        public Player Player { get; }
+        public ObservableCollection<EntityViewModel> Entities { get; }
 
         public GameViewModel()
         {
             Level = LevelFactory.CreateTestLevel();
             Tiles = new ObservableCollection<TileViewModel>();
+            Entities = new ObservableCollection<EntityViewModel>();
+
+            Player = new Player(new Position(5, 5));
+
+            Entities.Add(new EntityViewModel(Player, TileSize));
 
             for (int x = 0; x < Level.Width; x++)
             {
