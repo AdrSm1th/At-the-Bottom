@@ -12,6 +12,7 @@ namespace At_the_Bottom.ViewModels
         public double CanvasHeight => Level.Height * TileSize;
         public Player Player { get; }
         public ObservableCollection<EntityViewModel> Entities { get; }
+        public EntityViewModel PlayerViewModel { get; }
 
         public GameViewModel()
         {
@@ -21,7 +22,9 @@ namespace At_the_Bottom.ViewModels
 
             Player = new Player(new Position(5, 5));
 
-            Entities.Add(new EntityViewModel(Player, TileSize));
+            PlayerViewModel = new EntityViewModel(Player, TileSize);
+
+            Entities.Add(PlayerViewModel);
 
             for (int x = 0; x < Level.Width; x++)
             {
@@ -34,6 +37,20 @@ namespace At_the_Bottom.ViewModels
                     }
                 }
             }
+        }
+
+        public bool MovePlayer(int dx, int dy)
+        {
+            int x = Player.Position.X + dx;
+            int y = Player.Position.Y + dy;
+
+            if (!Level.IsWalkedble(x, y))
+                return false;
+
+            Player.Position = new Position(x, y);
+            PlayerViewModel.RefreshPosition();
+
+            return true;
         }
     }
 }
