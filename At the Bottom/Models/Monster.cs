@@ -1,9 +1,7 @@
 ﻿namespace At_the_Bottom.Models
 {
     public class Monster(Position pos)
-        : Entity(pos, 'g', "Goblin")
+        : Entity(pos, 'g', "Гоблин", 10, 2)
     {
-        public int Health { get; set; } = 3;
-        public int Damage { get; set; } = 1;
     }
 }

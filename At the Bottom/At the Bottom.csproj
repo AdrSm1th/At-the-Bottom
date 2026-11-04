@@ -10,8 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Views\" />
-    <Folder Include="Servises\" />
     <Folder Include="Algorithms\" />
     <Folder Include="Assets\" />
   </ItemGroup>

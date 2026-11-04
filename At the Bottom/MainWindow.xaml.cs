@@ -1,14 +1,6 @@
 ﻿using At_the_Bottom.ViewModels;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace At_the_Bottom
 {
@@ -17,11 +9,6 @@ namespace At_the_Bottom
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int TileSize = 32;
-
-        private int playerX = 0;
-        private int playerY = 0;
-
         private GameViewModel gameViewModel;
 
         public MainWindow()
@@ -41,6 +28,15 @@ namespace At_the_Bottom
 
             if (DataContext is not GameViewModel vm)
                 return;
+
+            if (vm.IsInBattle)
+            {
+                if (e.Key == Key.Escape)
+                    vm.EndBattle();
+
+                e.Handled = true;
+                return;
+            }
 
             int dx = 0;
             int dy = 0;
