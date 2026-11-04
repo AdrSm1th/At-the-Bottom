@@ -8,5 +8,6 @@ namespace At_the_Bottom.Models
         public bool IsExplored { get; set; } = false;
         public Position Position { get; set; } = position;
         public bool IsWalkable => Type != TileType.Wall;
+        public bool IsEnemy { get; set; } = false;
     }
 }

@@ -21,6 +21,7 @@
             }
 
             level.Tiles[width - 2, height - 2].Type = TileType.Stairs;
+            level.Tiles[width - 4, height - 4].Type = TileType.Wall;
 
             return level;
         }

@@ -17,14 +17,17 @@ namespace At_the_Bottom.ViewModels
         public GameViewModel()
         {
             Level = LevelFactory.CreateTestLevel();
-            Tiles = new ObservableCollection<TileViewModel>();
-            Entities = new ObservableCollection<EntityViewModel>();
+            Tiles = [];
+            Entities = [];
 
             Player = new Player(new Position(5, 5));
+
+            Monster goblin = new Monster(new Position(7, 7));
 
             PlayerViewModel = new EntityViewModel(Player, TileSize);
 
             Entities.Add(PlayerViewModel);
+            Entities.Add(new EntityViewModel(goblin, TileSize));
 
             for (int x = 0; x < Level.Width; x++)
             {
@@ -47,10 +50,26 @@ namespace At_the_Bottom.ViewModels
             if (!Level.IsWalkedble(x, y))
                 return false;
 
+            if (IsCellOccupied(x, y))
+                return false;
+
             Player.Position = new Position(x, y);
             PlayerViewModel.RefreshPosition();
 
             return true;
+        }
+
+        private bool IsCellOccupied(int x, int y)
+        {
+            foreach (var entityVM in Entities)
+            {
+                var position = entityVM.Model.Position;
+
+                if (position.X == x && position.Y == y)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

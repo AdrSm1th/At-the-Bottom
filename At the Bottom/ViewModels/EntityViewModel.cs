@@ -10,6 +10,7 @@ namespace At_the_Bottom.ViewModels
         public double PixelTop => entity.Position.Y * Size;
         public char Symbol => entity.Symbol;
         public int Size { get; } = tileSize;
+        public Entity Model { get; } = entity;
 
         public void RefreshPosition()
         {
