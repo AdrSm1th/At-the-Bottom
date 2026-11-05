@@ -84,6 +84,26 @@
             </views:BattleView.Style>
         </views:BattleView>
 
+        <views:LevelUpView>
+            <views:LevelUpView.Style>
+                <Style TargetType="{x:Type views:LevelUpView}">
+
+                    <Setter Property="Visibility"
+                    Value="Collapsed"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLevelUpOpen}"
+                             Value="True">
+
+                            <Setter Property="Visibility"
+                            Value="Visible"/>
+
+                        </DataTrigger>
+                    </Style.Triggers>
+
+                </Style>
+            </views:LevelUpView.Style>
+        </views:LevelUpView>
 
         <Border Background="#E5111111">
             <Border.Style>

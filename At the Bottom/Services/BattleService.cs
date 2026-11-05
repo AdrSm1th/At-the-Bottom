@@ -14,7 +14,10 @@ namespace At_the_Bottom.Services
             Entity defender,
             bool isDefending = false)
         {
-            int damage = attacker.Damage;
+            int damage = Math.Max(
+                1,
+                attacker.Damage - defender.Defense
+            );
 
             if (isDefending)
             {
