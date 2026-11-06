@@ -4,6 +4,7 @@
     {
         public int Experience { get; private set; } = 0;
         public int Gold { get; private set; } = 0;
+        public int Potions { get; private set; } = 2;
         public int Level { get; private set; } = 1;
         public int UpgradePoints { get; private set; } = 0;
         public int ExperienceToNextLevel => Level * 20;
@@ -47,6 +48,17 @@
             }
 
             UpgradePoints--;
+
+            return true;
+        }
+
+        public bool TryUsePotion()
+        {
+            if (Potions <= 0 || Health == MaxHealth)
+                return false;
+
+            Heal(6);
+            Potions--;
 
             return true;
         }

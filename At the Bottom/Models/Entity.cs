@@ -39,5 +39,13 @@
         {
             Defense += amount;
         }
+
+        public void Heal(int amount)
+        {
+            if (amount <= 0 || !IsAlive)
+                return;
+
+            Health = Math.Min(MaxHealth, Health + amount);
+        }
     }
 }

@@ -8,7 +8,7 @@
         PreviewKeyDown="Window_PreviewKeyDown">
 
     <Window.Resources>
-        <converters:TileTypeToBrushConverter x:Key="TileTypeToBrush" />
+        <converters:TileTypeToBrushConverter x:Key="TileTypeToBrush"/>
     </Window.Resources>
 
     <Grid Background="Black">
@@ -41,13 +41,13 @@
                             Mode=OneWay}"/>
 
                 <TextBlock Text="{Binding PlayerLevel,
-                StringFormat='Уровень: {0}'}"
-                Foreground="White"
-                Margin="0,0,20,0"/>
+                    StringFormat='Уровень: {0}'}"
+                    Foreground="White"
+                    Margin="0,0,20,0"/>
 
                 <TextBlock Text="{Binding PlayerExperience,
-                StringFormat='XP: {0}'}"
-                Foreground="White"/>
+                    StringFormat='XP: {0}'}"
+                    Foreground="White"/>
 
                 <ProgressBar Width="100"
                     Height="15"
@@ -57,8 +57,14 @@
                             Mode=OneWay}"/>
 
                 <TextBlock Text="{Binding PlayerGold,
-                StringFormat='Золото: {0}'}"
-                Foreground="Gold"/>
+                    StringFormat='Золото: {0}'}"
+                    Foreground="Gold"/>
+
+                <TextBlock Text="{Binding PlayerPotions,
+                    StringFormat='Зелья: {0}'}"
+                    Foreground="LightGreen"
+                    Margin="20,0,0,0"/>
+
 
             </StackPanel>
         </Border>

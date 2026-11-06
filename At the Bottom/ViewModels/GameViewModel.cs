@@ -25,6 +25,7 @@ namespace At_the_Bottom.ViewModels
         public int PlayerHealth => Player.Health;
         public int PlayerDamage => Player.Damage;
         public int PlayerDefense => Player.Defense;
+        public int PlayerPotions => Player.Potions;
 
         public int PlayerExperience => Player.Experience;
         public int PlayerExperienceToNextLevel => Player.ExperienceToNextLevel;
@@ -70,6 +71,8 @@ namespace At_the_Bottom.ViewModels
 
             AttackCommand = new RelayCommand(Attack);
             DefendCommand = new RelayCommand(Defend);
+            UsePotionCommand = new RelayCommand(UsePotion);
+
             UpgradeHealthCommand = new RelayCommand(
                 () => ApplyUpgrade(UpgradeType.Health));
 
@@ -147,6 +150,7 @@ namespace At_the_Bottom.ViewModels
 
         public IRelayCommand AttackCommand { get; }
         public IRelayCommand DefendCommand { get; }
+        public IRelayCommand UsePotionCommand { get; }
         public IRelayCommand UpgradeHealthCommand { get; }
         public IRelayCommand UpgradeDamageCommand { get; }
         public IRelayCommand UpgradeDefenseCommand { get; }
@@ -179,6 +183,20 @@ namespace At_the_Bottom.ViewModels
             }
 
             EnemyTurn(CurrentBattle, true);
+        }
+
+        private void UsePotion()
+        {
+            if (!IsInBattle || CurrentBattle == null)
+                return;
+
+            if (!Player.TryUsePotion())
+                return;
+
+            CurrentBattle.RefreshHealth();
+            RefreshPlayerStats();
+
+            EnemyTurn(CurrentBattle);
         }
 
         private void EnemyTurn(
@@ -266,11 +284,12 @@ namespace At_the_Bottom.ViewModels
 
             OnPropertyChanged(nameof(PlayerExperience));
             OnPropertyChanged(nameof(PlayerExperienceToNextLevel));
-            OnPropertyChanged(nameof(PlayerGold));
 
+            OnPropertyChanged(nameof(PlayerGold));
             OnPropertyChanged(nameof(PlayerDamage));
             OnPropertyChanged(nameof(PlayerDefense));
             OnPropertyChanged(nameof(UpgradePoints));
+            OnPropertyChanged(nameof(PlayerPotions));
         }
     }
 }
