@@ -12,7 +12,58 @@
     </Window.Resources>
 
     <Grid Background="Black">
-        <ItemsControl ItemsSource="{Binding Tiles}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0"
+            Background="#252D38"
+            Padding="12">
+
+            <StackPanel Orientation="Horizontal"
+            VerticalAlignment="Center">
+
+                <TextBlock Text="Каэль"
+                Foreground="White"
+                FontSize="18"
+                Margin="0,0,20,0"/>
+
+                <TextBlock Text="{Binding PlayerHealth,
+                StringFormat='HP: {0}'}"
+                Foreground="White"/>
+
+                <ProgressBar Width="100"
+                    Height="15"
+                    Margin="8,0,20,0"
+                    Maximum="{Binding PlayerMaxHealth}"
+                    Value="{Binding PlayerHealth,
+                            Mode=OneWay}"/>
+
+                <TextBlock Text="{Binding PlayerLevel,
+                StringFormat='Уровень: {0}'}"
+                Foreground="White"
+                Margin="0,0,20,0"/>
+
+                <TextBlock Text="{Binding PlayerExperience,
+                StringFormat='XP: {0}'}"
+                Foreground="White"/>
+
+                <ProgressBar Width="100"
+                    Height="15"
+                    Margin="8,0,20,0"
+                    Maximum="{Binding PlayerExperienceToNextLevel}"
+                    Value="{Binding PlayerExperience,
+                            Mode=OneWay}"/>
+
+                <TextBlock Text="{Binding PlayerGold,
+                StringFormat='Золото: {0}'}"
+                Foreground="Gold"/>
+
+            </StackPanel>
+        </Border>
+
+        <ItemsControl ItemsSource="{Binding Tiles}" Grid.Row="1">
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="ContentPresenter">
                     <Setter Property="Canvas.Left" Value="{Binding PixelLeft}" />
@@ -34,7 +85,7 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <ItemsControl ItemsSource="{Binding Entities}">
+        <ItemsControl ItemsSource="{Binding Entities}" Grid.Row="1">
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="ContentPresenter">
                     <Setter Property="Canvas.Left" Value="{Binding PixelLeft}" />
@@ -63,7 +114,7 @@
         </ItemsControl>
 
 
-        <views:BattleView>
+        <views:BattleView Grid.RowSpan="2">
             <views:BattleView.Style>
                 <Style TargetType="{x:Type views:BattleView}">
 
@@ -84,7 +135,7 @@
             </views:BattleView.Style>
         </views:BattleView>
 
-        <views:LevelUpView>
+        <views:LevelUpView Grid.RowSpan="2">
             <views:LevelUpView.Style>
                 <Style TargetType="{x:Type views:LevelUpView}">
 
@@ -105,7 +156,7 @@
             </views:LevelUpView.Style>
         </views:LevelUpView>
 
-        <Border Background="#E5111111">
+        <Border Background="#E5111111" Grid.RowSpan="2">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Visibility"

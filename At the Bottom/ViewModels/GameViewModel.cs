@@ -22,8 +22,14 @@ namespace At_the_Bottom.ViewModels
         public int UpgradePoints => Player.UpgradePoints;
 
         public int PlayerMaxHealth => Player.MaxHealth;
+        public int PlayerHealth => Player.Health;
         public int PlayerDamage => Player.Damage;
         public int PlayerDefense => Player.Defense;
+
+        public int PlayerExperience => Player.Experience;
+        public int PlayerExperienceToNextLevel => Player.ExperienceToNextLevel;
+        public int PlayerGold => Player.Gold;
+
 
         private bool isLevelUpOpen;
         public bool IsLevelUpOpen
@@ -187,6 +193,7 @@ namespace At_the_Bottom.ViewModels
             );
 
             battle.RefreshHealth();
+            RefreshPlayerStats();
 
             if (!battle.Player.IsAlive)
             {
@@ -226,6 +233,7 @@ namespace At_the_Bottom.ViewModels
                     enemy.GoldReward
                 );
             }
+            RefreshPlayerStats();
 
             EndBattle();
 
@@ -246,6 +254,23 @@ namespace At_the_Bottom.ViewModels
             OnPropertyChanged(nameof(PlayerDefense));
 
             IsLevelUpOpen = Player.UpgradePoints > 0;
+
+            RefreshPlayerStats();
+        }
+
+        private void RefreshPlayerStats()
+        {
+            OnPropertyChanged(nameof(PlayerHealth));
+            OnPropertyChanged(nameof(PlayerMaxHealth));
+            OnPropertyChanged(nameof(PlayerLevel));
+
+            OnPropertyChanged(nameof(PlayerExperience));
+            OnPropertyChanged(nameof(PlayerExperienceToNextLevel));
+            OnPropertyChanged(nameof(PlayerGold));
+
+            OnPropertyChanged(nameof(PlayerDamage));
+            OnPropertyChanged(nameof(PlayerDefense));
+            OnPropertyChanged(nameof(UpgradePoints));
         }
     }
 }
