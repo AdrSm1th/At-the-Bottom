@@ -61,6 +61,13 @@ namespace At_the_Bottom.ViewModels
             private set => SetProperty(ref isGameOver, value);
         }
 
+        private bool bossDefeated = false;
+        public bool BossDefeated
+        {
+            get => bossDefeated;
+            private set => SetProperty(ref bossDefeated, value);
+        }
+
         private readonly BattleService battleService = new();
 
         public GameViewModel()
@@ -88,12 +95,15 @@ namespace At_the_Bottom.ViewModels
             Monster goblin2 = new (new Position(3, 3));
             Monster goblin3 = new (new Position(2, 5));
 
+            Boss boss = new(new Position(6, 2));
+
             PlayerViewModel = new EntityViewModel(Player, TileSize);
 
             Entities.Add(PlayerViewModel);
             Entities.Add(new EntityViewModel(goblin, TileSize));
             Entities.Add(new EntityViewModel(goblin2, TileSize));
             Entities.Add(new EntityViewModel(goblin3, TileSize));
+            Entities.Add(new EntityViewModel(boss, TileSize));
 
             for (int x = 0; x < Level.Width; x++)
             {
@@ -128,6 +138,10 @@ namespace At_the_Bottom.ViewModels
             }
 
             if (target != null)
+                return false;
+
+            Tile? tile = Level.GetTile(x, y);
+            if (tile?.Type == TileType.Stairs && !BossDefeated)
                 return false;
 
             Player.Position = new Position(x, y);
@@ -250,7 +264,13 @@ namespace At_the_Bottom.ViewModels
                     enemy.ExperienceReward,
                     enemy.GoldReward
                 );
+
+                if (enemy is Boss)
+                {
+                    BossDefeated = true;
+                }
             }
+
             RefreshPlayerStats();
 
             EndBattle();
