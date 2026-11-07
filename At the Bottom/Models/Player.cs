@@ -47,6 +47,7 @@
                     return false;
             }
 
+            Heal(MaxHealth);
             UpgradePoints--;
 
             return true;

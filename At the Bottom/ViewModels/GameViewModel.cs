@@ -8,7 +8,7 @@ namespace At_the_Bottom.ViewModels
 {
     public class GameViewModel : ObservableObject
     {
-        public Level Level { get; }
+        public Level Level { get; private set; }
         public ObservableCollection<TileViewModel> Tiles { get; }
         public int TileSize { get; } = 32;
         public double CanvasWidth => Level.Width * TileSize;  
@@ -30,6 +30,13 @@ namespace At_the_Bottom.ViewModels
         public int PlayerExperience => Player.Experience;
         public int PlayerExperienceToNextLevel => Player.ExperienceToNextLevel;
         public int PlayerGold => Player.Gold;
+
+        public IRelayCommand AttackCommand { get; }
+        public IRelayCommand DefendCommand { get; }
+        public IRelayCommand UsePotionCommand { get; }
+        public IRelayCommand UpgradeHealthCommand { get; }
+        public IRelayCommand UpgradeDamageCommand { get; }
+        public IRelayCommand UpgradeDefenseCommand { get; }
 
 
         private bool isLevelUpOpen;
@@ -68,13 +75,23 @@ namespace At_the_Bottom.ViewModels
             private set => SetProperty(ref bossDefeated, value);
         }
 
+        private int floorNumber = 1;
+        public int FloorNumber
+        {
+            get => floorNumber;
+            private set => SetProperty(ref floorNumber, value);
+        }
+
         private readonly BattleService battleService = new();
 
         public GameViewModel()
         {
-            Level = LevelFactory.CreateTestLevel();
+            Level = new Level(24, 15);
             Tiles = [];
             Entities = [];
+            Player = new Player(new Position(0, 0));
+            PlayerViewModel = new EntityViewModel(Player, TileSize);
+            LoadFloor(LevelFactory.GenerateRandomFloor());
 
             AttackCommand = new RelayCommand(Attack);
             DefendCommand = new RelayCommand(Defend);
@@ -88,43 +105,16 @@ namespace At_the_Bottom.ViewModels
 
             UpgradeDefenseCommand = new RelayCommand(
                 () => ApplyUpgrade(UpgradeType.Defense));
-
-            Player = new Player(new Position(5, 5));
-
-            Monster goblin = new (new Position(7, 7));
-            Monster goblin2 = new (new Position(3, 3));
-            Monster goblin3 = new (new Position(2, 5));
-
-            Boss boss = new(new Position(6, 2));
-
-            PlayerViewModel = new EntityViewModel(Player, TileSize);
-
-            Entities.Add(PlayerViewModel);
-            Entities.Add(new EntityViewModel(goblin, TileSize));
-            Entities.Add(new EntityViewModel(goblin2, TileSize));
-            Entities.Add(new EntityViewModel(goblin3, TileSize));
-            Entities.Add(new EntityViewModel(boss, TileSize));
-
-            for (int x = 0; x < Level.Width; x++)
-            {
-                for (int y = 0; y < Level.Height; y++)
-                {
-                    var tile = Level.GetTile(x, y);
-                    if (tile != null)
-                    {
-                        Tiles.Add(new TileViewModel(tile, TileSize));
-                    }
-                }
-            }
         }
 
         public bool MovePlayer(int dx, int dy)
         {
-            int x = Player.Position.X + dx;
-            int y = Player.Position.Y + dy;
 
             if (IsGameOver || IsLevelUpOpen)
                 return false;
+
+            int x = Player.Position.X + dx;
+            int y = Player.Position.Y + dy;
 
             if (!Level.IsWalkedble(x, y))
                 return false;
@@ -141,8 +131,15 @@ namespace At_the_Bottom.ViewModels
                 return false;
 
             Tile? tile = Level.GetTile(x, y);
-            if (tile?.Type == TileType.Stairs && !BossDefeated)
-                return false;
+            if (tile?.Type == TileType.Stairs)
+            {
+                if (!BossDefeated)
+                    return false;
+
+                GoToNextFloor();
+                return true;
+            }
+
 
             Player.Position = new Position(x, y);
             PlayerViewModel.RefreshPosition();
@@ -161,13 +158,6 @@ namespace At_the_Bottom.ViewModels
             IsInBattle = false;
             CurrentBattle = null;
         }
-
-        public IRelayCommand AttackCommand { get; }
-        public IRelayCommand DefendCommand { get; }
-        public IRelayCommand UsePotionCommand { get; }
-        public IRelayCommand UpgradeHealthCommand { get; }
-        public IRelayCommand UpgradeDamageCommand { get; }
-        public IRelayCommand UpgradeDefenseCommand { get; }
 
         private void Attack()
         {
@@ -311,5 +301,62 @@ namespace At_the_Bottom.ViewModels
             OnPropertyChanged(nameof(UpgradePoints));
             OnPropertyChanged(nameof(PlayerPotions));
         }
+
+        private void GoToNextFloor()
+        {
+            GeneratedFloor generated =
+                LevelFactory.GenerateRandomFloor();
+
+            LoadFloor(generated);
+
+            FloorNumber++;
+        }
+
+        private void LoadFloor(GeneratedFloor generated)
+        {
+            Level = generated.Level;
+
+            Tiles.Clear();
+
+            for (int x = 0; x < Level.Width; x++)
+            {
+                for (int y = 0; y < Level.Height; y++)
+                {
+                    Tile? tile = Level.GetTile(x, y);
+
+                    if (tile != null)
+                        Tiles.Add(new TileViewModel(tile, TileSize));
+                }
+            }
+
+            Entities.Clear();
+
+            Player.Position = generated.PlayerSpawn;
+            PlayerViewModel.RefreshPosition();
+
+            Entities.Add(PlayerViewModel);
+
+            foreach (Position pos in generated.MonsterSpawns)
+            {
+                Monster monster = new(pos);
+
+                Entities.Add(
+                    new EntityViewModel(monster, TileSize)
+                );
+            }
+
+            Boss boss = new(generated.BossSpawn);
+
+            Entities.Add(
+                new EntityViewModel(boss, TileSize)
+            );
+
+            BossDefeated = false;
+
+            OnPropertyChanged(nameof(Level));
+            OnPropertyChanged(nameof(CanvasWidth));
+            OnPropertyChanged(nameof(CanvasHeight));
+        }
+
     }
 }

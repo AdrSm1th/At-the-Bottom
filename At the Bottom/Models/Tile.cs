@@ -1,5 +1,4 @@
-﻿using System;
-namespace At_the_Bottom.Models
+﻿namespace At_the_Bottom.Models
 {
     public class Tile (TileType type, Position position)
     {
