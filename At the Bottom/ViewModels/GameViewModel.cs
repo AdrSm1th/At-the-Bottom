@@ -91,7 +91,7 @@ namespace At_the_Bottom.ViewModels
             Entities = [];
             Player = new Player(new Position(0, 0));
             PlayerViewModel = new EntityViewModel(Player, TileSize);
-            LoadFloor(LevelFactory.GenerateRandomFloor());
+            LoadFloor(LevelFactory.GenerateRandomFloor(), FloorNumber);
 
             AttackCommand = new RelayCommand(Attack);
             DefendCommand = new RelayCommand(Defend);
@@ -166,8 +166,13 @@ namespace At_the_Bottom.ViewModels
 
             BattleViewModel battle = CurrentBattle;
 
+            int bonusDamage = battle.CounterAttackReady
+                ? (Player.Damage + 1) / 2
+                : 0;
+
             // Герой атакует
-            battleService.Attack(battle.Player, battle.Enemy);
+            battleService.Attack(battle.Player, battle.Enemy, damageBonus: bonusDamage);
+            battle.ConsumeCounterAttack();
             battle.RefreshHealth();
 
             if (!battle.Enemy.IsAlive)
@@ -207,12 +212,34 @@ namespace At_the_Bottom.ViewModels
             BattleViewModel battle,
             bool playerDefending = false)
         {
-            // Враг атакует
-            battleService.Attack(
+            switch (battle.CurrentIntent)
+            {
+                case EnemyIntent.NormalAttack:
+                case EnemyIntent.HeavyAttack:
+                    int multiplier = battle.CurrentIntent == EnemyIntent.HeavyAttack
+                            ? 2
+                            : 1;
+
+                // Враг атакует
+                battleService.Attack(
                 battle.Enemy,
                 battle.Player,
-                playerDefending
-            );
+                isDefending: playerDefending,
+                damageMultiplier: multiplier);
+
+                // Подготовка контратаки
+                if (playerDefending && battle.Player.IsAlive)
+                {
+                    battle.PrepareCounterAttack();
+                }
+
+                break;
+
+                case EnemyIntent.Rest:
+                    // Противник пропускает ход
+                    break;
+            }
+
 
             battle.RefreshHealth();
             RefreshPlayerStats();
@@ -221,7 +248,10 @@ namespace At_the_Bottom.ViewModels
             {
                 IsGameOver = true;
                 EndBattle();
+                return;
             }
+
+            battle.AdvanceIntent();
         }
 
         private Entity? GetEntityAt(int x, int y)
@@ -304,15 +334,20 @@ namespace At_the_Bottom.ViewModels
 
         private void GoToNextFloor()
         {
-            GeneratedFloor generated =
-                LevelFactory.GenerateRandomFloor();
+            int nextFloor = FloorNumber;
 
-            LoadFloor(generated);
+            int monsterCountNext = Math.Min(
+                3 + (nextFloor - 1) / 2, 8);
+
+            GeneratedFloor generated =
+                LevelFactory.GenerateRandomFloor(monsterCount : monsterCountNext);
+
+            LoadFloor(generated, nextFloor);
 
             FloorNumber++;
         }
 
-        private void LoadFloor(GeneratedFloor generated)
+        private void LoadFloor(GeneratedFloor generated, int floor)
         {
             Level = generated.Level;
 
@@ -338,14 +373,14 @@ namespace At_the_Bottom.ViewModels
 
             foreach (Position pos in generated.MonsterSpawns)
             {
-                Monster monster = new(pos);
+                Monster monster = MonsterFactory.CreateRandom(pos, floor);
 
                 Entities.Add(
                     new EntityViewModel(monster, TileSize)
                 );
             }
 
-            Boss boss = new(generated.BossSpawn);
+            Boss boss = new(generated.BossSpawn, floor);
 
             Entities.Add(
                 new EntityViewModel(boss, TileSize)

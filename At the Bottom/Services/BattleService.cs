@@ -7,16 +7,18 @@ namespace At_the_Bottom.Services
         public int Attack(
             Entity attacker,
             Entity defender,
-            bool isDefending = false)
+            bool isDefending = false,
+            int damageBonus = 0,
+            int damageMultiplier = 1)
         {
             int damage = Math.Max(
                 1,
-                attacker.Damage - defender.Defense
+                attacker.Damage * damageMultiplier + damageBonus - defender.Defense
             );
 
             if (isDefending)
             {
-                damage = Math.Max(1, (damage + 1) / 2);
+                damage = Math.Max(1, (damage + 3) / 4);
             }
 
             defender.TakeDamage(damage);

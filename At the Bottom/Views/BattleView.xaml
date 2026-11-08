@@ -22,27 +22,41 @@
                 HorizontalAlignment="Center">
 
             <TextBlock Text="{Binding CurrentBattle.EnemyName}"
-                   Foreground="White"
-                   FontSize="24"
-                   HorizontalAlignment="Center"/>
+                Foreground="White"
+                FontSize="24"
+                HorizontalAlignment="Center"/>
 
             <ProgressBar Width="250"
-                   Height="20"
-                   Maximum="{Binding CurrentBattle.EnemyMaxHealth}"
-                   Value="{Binding CurrentBattle.EnemyHealth, Mode=OneWay}"
-                   Margin="0,10,0,0"/>
+                Height="20"
+                Maximum="{Binding CurrentBattle.EnemyMaxHealth}"
+                Value="{Binding CurrentBattle.EnemyHealth, Mode=OneWay}"
+                Margin="0,10,0,0"/>
+
+            <TextBlock
+                Text="{Binding CurrentBattle.EnemyIntentText}"
+                Foreground="Orange"
+                FontSize="18"
+                HorizontalAlignment="Center"
+                Margin="0,15,0,0"/>
 
             <TextBlock Text="{Binding CurrentBattle.PlayerName}"
-                   Foreground="White"
-                   FontSize="24"
-                   HorizontalAlignment="Center"
-                   Margin="0,70,0,0"/>
+                Foreground="White"
+                FontSize="24"
+                HorizontalAlignment="Center"
+                Margin="0,70,0,0"/>
 
             <ProgressBar Width="250"
-                   Height="20"
-                   Maximum="{Binding CurrentBattle.PlayerMaxHealth}"
-                   Value="{Binding CurrentBattle.PlayerHealth, Mode=OneWay}"
-                   Margin="0,10,0,0"/>
+                Height="20"
+                Maximum="{Binding CurrentBattle.PlayerMaxHealth}"
+                Value="{Binding CurrentBattle.PlayerHealth, Mode=OneWay}"
+                Margin="0,10,0,0"/>
+            
+            <TextBlock
+                Text="{Binding CurrentBattle.CounterAttackText}"
+                Foreground="LightGreen"
+                FontSize="16"
+                HorizontalAlignment="Center"
+                Margin="0,15,0,0"/>
 
         </StackPanel>
 
